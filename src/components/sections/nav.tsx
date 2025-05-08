@@ -101,8 +101,8 @@ const Nav = () => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os filmes</SelectItem>
-                  <SelectItem value="rated">Classificados</SelectItem>
-                  <SelectItem value="unrated">Sem classificação</SelectItem>
+                  <SelectItem value="-1">Classificados</SelectItem>
+                  <SelectItem value="-2">Sem classificação</SelectItem>
 
                   <div className="my-1 border-t border-gray-200 opacity-30" />
 

@@ -112,14 +112,21 @@ export const useFilmStore = create<FilmState>()(
         } = filters;
 
         return films.filter((film) => {
-          // Aplicar filtros de estado
           if (favoritesOnly && !film.isFavorite) return false;
           if (watchedOnly && !film.isWatched) return false;
           if (withNotesOnly && !film.note) return false;
-          if (minRating !== null && (film.userRating || 0) < minRating)
-            return false;
 
-          // Aplicar busca
+          //Filtro de classificação
+          if (minRating !== null) {
+            const filmRating = film.userRating || 0
+
+            //Casos especiais do select
+            if (minRating === -1) return filmRating > 0; // "Classificados"
+            if (minRating === -2) return filmRating === 0; // "Sem classificção" 
+
+            if (filmRating !== minRating) return false;
+          }
+
           if (searchTerm) {
             const searchLower = searchTerm.toLowerCase();
             const matchesTitle = film.title.toLowerCase().includes(searchLower);
