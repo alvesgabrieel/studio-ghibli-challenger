@@ -8,23 +8,36 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useFilmStore } from "@/store/filmStore";
 
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { StarRating } from "../ui/starRating";
 
 const Nav = () => {
+  const { searchTerm, setSearchTerm, filters, setFilter, clearAllFilters } =
+    useFilmStore();
+
   return (
     <>
-      <SearchBar />
+      <SearchBar
+        value={searchTerm}
+        onChange={(value: string) => setSearchTerm(value)}
+      />
 
       <div className="mb-2">
         {/* checkbox */}
         <div className="mb-8 flex justify-between">
           <div className="flex items-center space-x-2">
-            <Checkbox id="synopsis" />
+            <Checkbox
+              id="synopsis"
+              checked={filters.includeSynopsis}
+              onCheckedChange={(checked) =>
+                setFilter({ includeSynopsis: Boolean(checked) })
+              }
+            />
             <label htmlFor="synopsis" className="text-sm font-medium">
-              Include synopsis in search
+              Incluir sinopse na busca
             </label>
           </div>
 
@@ -51,17 +64,37 @@ const Nav = () => {
           <nav>
             <div className="flex gap-1.5">
               <span className="flex items-center">Filtros:</span>
-              <Button variant="light-gray">
+              <Button
+                variant={filters.watchedOnly ? "default" : "light-gray"}
+                onClick={() => setFilter({ watchedOnly: !filters.watchedOnly })}
+              >
                 <Eye className="size-4" /> Assistidos
               </Button>
-              <Button variant="light-gray">
+              <Button
+                variant={filters.favoritesOnly ? "default" : "light-gray"}
+                onClick={() =>
+                  setFilter({ favoritesOnly: !filters.favoritesOnly })
+                }
+              >
                 <Heart className="size-4" /> Favoritos
               </Button>
-              <Button variant="light-gray">
+              <Button
+                variant={filters.withNotesOnly ? "default" : "light-gray"}
+                onClick={() =>
+                  setFilter({ withNotesOnly: !filters.withNotesOnly })
+                }
+              >
                 <NotebookPen className="size-4" /> Com notas
               </Button>
 
-              <Select>
+              <Select
+                value={filters.minRating ? filters.minRating.toString() : "all"}
+                onValueChange={(value) =>
+                  setFilter({
+                    minRating: value === "all" ? null : parseInt(value),
+                  })
+                }
+              >
                 <SelectTrigger className="w-[200px]">
                   <Star className="size-4" />
                   <SelectValue placeholder="Classificação" />
@@ -73,44 +106,29 @@ const Nav = () => {
 
                   <div className="my-1 border-t border-gray-200 opacity-30" />
 
-                  <SelectItem value="5">
-                    <div className="flex items-center gap-2">
-                      <StarRating rating={5} />
-                      <span>5 estrelas</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="4">
-                    <div className="flex items-center gap-2">
-                      <StarRating rating={4} />
-                      <span>4 estrelas</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="3">
-                    <div className="flex items-center gap-2">
-                      <StarRating rating={3} />
-                      <span>3 estrelas</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="2">
-                    <div className="flex items-center gap-2">
-                      <StarRating rating={2} />
-                      <span>2 estrelas</span>
-                    </div>
-                  </SelectItem>
-                  <SelectItem value="1">
-                    <div className="flex items-center gap-2">
-                      <StarRating rating={1} />
-                      <span>1 estrela</span>
-                    </div>
-                  </SelectItem>
+                  {[5, 4, 3, 2, 1].map((rating) => (
+                    <SelectItem key={rating} value={rating.toString()}>
+                      <div className="flex items-center gap-2">
+                        <StarRating rating={rating} />
+                        <span>
+                          {rating} estrela{rating !== 1 ? "s" : ""}
+                        </span>
+                      </div>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
           </nav>
-          <Button variant="light-gray">Limpar tudo</Button>
+          <Button variant="light-gray" onClick={clearAllFilters}>
+            Limpar tudo
+          </Button>
         </div>
         <div className="mb-8">
-          <p className="text-sm text-gray-500"> Filtros ativos:</p>
+          <p className="text-sm text-gray-500">
+            {" "}
+            Filtros ativos: {Object.values(filters).filter(Boolean).length}
+          </p>
         </div>
       </div>
     </>

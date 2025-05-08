@@ -1,19 +1,29 @@
-import { BookOpen, Calendar, Clock, Eye, Heart, Star } from "lucide-react";
+import { Calendar, Clock, Eye, Heart, Star } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
-import { useGhibliFilms } from "@/hooks/useGhibliFilms";
+import { useFilmStore } from "@/store/filmStore";
 import { formatRuntime } from "@/utils/formatRuntime";
 
 const MainContent = () => {
-  const { films, loading, error } = useGhibliFilms();
+  const {
+    loading,
+    error,
+    toggleFavorite,
+    toggleWatched,
+    setNote,
+    setUserRating,
+    getFilteredFilms,
+  } = useFilmStore();
+
+  const filteredFilms = getFilteredFilms();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {films.map((film) => (
+      {filteredFilms.map((film) => (
         <div
           key={film.id}
           className="group relative overflow-hidden rounded-lg border bg-white shadow-sm transition-all hover:shadow-md"
@@ -52,10 +62,12 @@ const MainContent = () => {
                 <Star className="h-4 w-4 fill-yellow-400" />
                 <span className="text-sm font-medium">{film.rt_scorr}</span>
               </div>
-              <div className="flex items-center gap-1 text-gray-500">
-                <Star className="h-4 w-4" />
-                <span className="text-sm">4.5</span>
-              </div>
+              {film.userRating ? (
+                <div className="flex items-center gap-1 text-gray-500">
+                  <Star className="h-4 w-4" />
+                  <span className="text-sm">{film.userRating}</span>
+                </div>
+              ) : null}
             </div>
 
             {/* Descrição (limitada a 3 linhas) */}
@@ -82,6 +94,8 @@ const MainContent = () => {
                 placeholder="Your notes..."
                 className="w-full rounded border px-3 py-2 text-sm focus:ring-1 focus:ring-gray-400 focus:outline-none"
                 maxLength={60}
+                value={film.note || ""}
+                onChange={(e) => setNote(film.id, e.target.value)}
               />
             </div>
 
@@ -89,26 +103,39 @@ const MainContent = () => {
             <div className="flex flex-col gap-2">
               <div className="flex gap-2">
                 <Button
-                  variant="outline"
+                  variant={film.isWatched ? "default" : "outline"}
                   className="flex-1 gap-1 text-sm"
                   size="sm"
+                  onClick={() => toggleWatched(film.id)}
                 >
                   <Eye className="h-4 w-4" />
-                  Watched
+                  {film.isWatched ? "Watched" : "Watch"}
                 </Button>
+
                 <Button
-                  variant="outline"
+                  variant={film.isFavorite ? "default" : "outline"}
                   className="flex-1 gap-1 text-sm"
                   size="sm"
+                  onClick={() => toggleFavorite(film.id)}
                 >
                   <Heart className="h-4 w-4" />
-                  Favorite
+                  {film.isFavorite ? "Favorito" : "Adicionar aos favoritos"}
                 </Button>
               </div>
-              <Button className="gap-1 text-sm" size="sm">
-                <BookOpen className="h-4 w-4" />
-                Add Note
-              </Button>
+
+              <div className="felx gap-2">
+                {[1, 2, 3, 4, 5].map((rating) => (
+                  <Button
+                    key={rating}
+                    variant={film.userRating === rating ? "default" : "outline"}
+                    size="sm"
+                    className="h-8 w-8 p-0"
+                    onClick={() => setUserRating(film.id, rating)}
+                  >
+                    {rating}
+                  </Button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
