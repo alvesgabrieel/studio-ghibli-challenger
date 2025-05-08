@@ -71,7 +71,7 @@ const Nav = () => {
                 <Eye className="size-4" /> Assistidos
               </Button>
               <Button
-                variant={filters.favoritesOnly ? "default" : "light-gray"}
+                variant={filters.favoritesOnly ? "destructive" : "light-gray"}
                 onClick={() =>
                   setFilter({ favoritesOnly: !filters.favoritesOnly })
                 }

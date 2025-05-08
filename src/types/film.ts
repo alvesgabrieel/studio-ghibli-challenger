@@ -3,7 +3,7 @@ export interface Film {
   title: string;
   release_date: string;
   running_time: string;
-  rt_scorr: string;
+  rt_score: string;
   description: string;
   director: string;
   producer: string;

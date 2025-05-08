@@ -1,9 +1,15 @@
-import { Calendar, Clock, Eye, Heart, Star } from "lucide-react";
+"use client";
+
+import { Calendar, Clock, Eye, Heart, NotebookPen, Star } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { useFilmStore } from "@/store/filmStore";
 import { formatRuntime } from "@/utils/formatRuntime";
+
+import { StarRating } from "../ui/starRating";
+import { FilmRatingDialog } from "./FilmRatingDialog";
 
 const MainContent = () => {
   const {
@@ -16,12 +22,37 @@ const MainContent = () => {
     getFilteredFilms,
   } = useFilmStore();
 
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedFilm, setSelectedFilm] = useState<{
+    id: string;
+    note?: string;
+    userRating?: number;
+  } | null>(null);
+
+  const handleOpenDialog = (film: {
+    id: string;
+    note?: string;
+    userRating?: number;
+  }) => {
+    setSelectedFilm(film);
+    setDialogOpen(true);
+  };
+
+  const handleSaveRating = (rating: number, note: string) => {
+    if (!selectedFilm) return;
+    
+    setUserRating(selectedFilm.id, rating);
+    setNote(selectedFilm.id, note);
+  };
+
+
   const filteredFilms = getFilteredFilms();
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>{error}</p>;
 
   return (
+   <>
     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
       {filteredFilms.map((film) => (
         <div
@@ -57,17 +88,19 @@ const MainContent = () => {
             </div>
 
             {/* Pontuação */}
-            <div className="mb-3 flex items-center gap-2">
+            <div className="mb-3 flex items-center justify-between gap-2">
               <div className="flex items-center gap-1 text-yellow-600">
                 <Star className="h-4 w-4 fill-yellow-400" />
-                <span className="text-sm font-medium">{film.rt_scorr}</span>
+                <span className="text-sm font-medium">{film.rt_score}%</span>
               </div>
-              {film.userRating ? (
-                <div className="flex items-center gap-1 text-gray-500">
-                  <Star className="h-4 w-4" />
-                  <span className="text-sm">{film.userRating}</span>
-                </div>
-              ) : null}
+              <div>                
+                {film.userRating ? (
+                  <div className="flex items-center gap-1 text-gray-500">
+                    <Star className="h-4 w-4" />
+                    <span className="text-sm">{film.userRating}</span>
+                  </div>
+                ) : null}
+              </div>
             </div>
 
             {/* Descrição (limitada a 3 linhas) */}
@@ -87,17 +120,6 @@ const MainContent = () => {
               </div>
             </div>
 
-            {/* Caixa de notas do usuário */}
-            <div className="mb-4">
-              <input
-                type="text"
-                placeholder="Your notes..."
-                className="w-full rounded border px-3 py-2 text-sm focus:ring-1 focus:ring-gray-400 focus:outline-none"
-                maxLength={60}
-                value={film.note || ""}
-                onChange={(e) => setNote(film.id, e.target.value)}
-              />
-            </div>
 
             {/* Botões de ação */}
             <div className="flex flex-col gap-2">
@@ -109,38 +131,60 @@ const MainContent = () => {
                   onClick={() => toggleWatched(film.id)}
                 >
                   <Eye className="h-4 w-4" />
-                  {film.isWatched ? "Watched" : "Watch"}
+                  {film.isWatched ? "Visto" : "Assistir"}
                 </Button>
 
                 <Button
-                  variant={film.isFavorite ? "default" : "outline"}
+                  variant={film.isFavorite ? "destructive" : "outline"}
                   className="flex-1 gap-1 text-sm"
                   size="sm"
                   onClick={() => toggleFavorite(film.id)}
                 >
                   <Heart className="h-4 w-4" />
-                  {film.isFavorite ? "Favorito" : "Adicionar aos favoritos"}
+                  {film.isFavorite ? "Favorito" : "Favoritar"}
                 </Button>
               </div>
 
-              <div className="felx gap-2">
-                {[1, 2, 3, 4, 5].map((rating) => (
-                  <Button
-                    key={rating}
-                    variant={film.userRating === rating ? "default" : "outline"}
-                    size="sm"
-                    className="h-8 w-8 p-0"
-                    onClick={() => setUserRating(film.id, rating)}
-                  >
-                    {rating}
-                  </Button>
-                ))}
-              </div>
+              <Button variant="outline" className="gap-1 text-sm" size="sm" onClick={() => handleOpenDialog({
+                id: film.id,
+                note: film.note,
+                userRating: film.userRating
+              })}>
+                <NotebookPen className="h-4 w-4" />
+                {film.note || film.userRating ? "Editar nota" : "Adicionar nota"}
+              </Button>
+
+              {(film.userRating !== undefined || film.note) && (
+                <div className="mt-2 text-sm space-y-1">
+                  {film.userRating !== undefined && film.userRating > 0 && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-gray-600">Sua avaliação:</span>
+                      <StarRating rating={film.userRating} size="sm" />
+                    </div>
+                  )}
+                  {film.note && (
+                    <p className="text-gray-600 line-clamp-1">
+                      <span className="font-medium">Nota:</span> {film.note}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </div>
       ))}
     </div>
+    {selectedFilm && (
+      <FilmRatingDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        filmId={selectedFilm.id}
+        initialRating={selectedFilm.userRating || 0}
+        initialNote={selectedFilm.note || ""}
+        onSave={handleSaveRating}
+      />
+    )}
+    </> 
   );
 };
 
