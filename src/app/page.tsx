@@ -1,20 +1,15 @@
 "use client";
 
-import { useGhibliFilms } from "@/hooks/useGhibliFilms";
+import Header from "@/components/sections/header";
+import MainContent from "@/components/sections/mainContent";
+import Nav from "@/components/sections/nav";
 
 export default function Home() {
-  const { films, loading, error } = useGhibliFilms()
-
-  if (loading) return <p>Loading...</p>
-  if(error) return <p>{error}</p>
   return (
-   <div>
-    <h1>Studio Ghibli Films</h1> 
-    <ul>
-      {films.map((film) => (
-        <li key={film.id}>{film.title}</li>
-      ))}
-    </ul>
-   </div>
+    <div className="p-8">
+      <Header />
+      <Nav />
+      <MainContent />
+    </div>
   );
 }
