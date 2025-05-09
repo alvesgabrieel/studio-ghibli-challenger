@@ -10,11 +10,12 @@ interface FilmWithMeta extends Film {
   userRating?: number;
 }
 
-interface FilmState {
+export interface FilmState {
   films: FilmWithMeta[];
   searchTerm: string;
   loading: boolean;
   error: string | null;
+  sortBy: "title-asc" | "title-desc" | "duration-asc" | "duration-desc" | "score-asc" | "score-desc" | "userRating-asc" | "userRating-desc" | null;
   filters: {
     favoritesOnly: boolean;
     watchedOnly: boolean;
@@ -23,6 +24,7 @@ interface FilmState {
     includeSynopsis: boolean;
   };
   setFilms: (films: Film[]) => void;
+  setSort: (sort: FilmState["sortBy"]) => void;
   toggleFavorite: (id: string) => void;
   toggleWatched: (id: string) => void;
   setNote: (id: string, note: string) => void;
@@ -42,6 +44,7 @@ export const useFilmStore = create<FilmState>()(
       searchTerm: "",
       loading: false,
       error: null,
+      sortBy: null,
       filters: {
         favoritesOnly: false,
         watchedOnly: false,
@@ -50,6 +53,7 @@ export const useFilmStore = create<FilmState>()(
         includeSynopsis: false,
       },
       setLoading: (loading) => set({ loading }),
+      setSort: (sort) => set({ sortBy: sort }),
       setError: (error) => set({ error }),
       setFilms: (films) =>
         set({
@@ -93,6 +97,7 @@ export const useFilmStore = create<FilmState>()(
       clearAllFilters: () =>
         set({
           searchTerm: "",
+          sortBy: null,
           filters: {
             favoritesOnly: false,
             watchedOnly: false,
@@ -102,7 +107,7 @@ export const useFilmStore = create<FilmState>()(
           },
         }),
       getFilteredFilms: () => {
-        const { films, searchTerm, filters } = get();
+        const { films, searchTerm, filters, sortBy } = get();
         const {
           favoritesOnly,
           watchedOnly,
@@ -111,19 +116,18 @@ export const useFilmStore = create<FilmState>()(
           includeSynopsis,
         } = filters;
 
-        return films.filter((film) => {
+        let filteredFilms = films.filter((film) => {
           if (favoritesOnly && !film.isFavorite) return false;
           if (watchedOnly && !film.isWatched) return false;
           if (withNotesOnly && !film.note) return false;
 
-          //Filtro de classificação
           if (minRating !== null) {
-            const filmRating = film.userRating || 0
-
+            const filmRating = film.userRating ?? 0
+  
             //Casos especiais do select
             if (minRating === -1) return filmRating > 0; // "Classificados"
             if (minRating === -2) return filmRating === 0; // "Sem classificção" 
-
+  
             if (filmRating !== minRating) return false;
           }
 
@@ -138,7 +142,35 @@ export const useFilmStore = create<FilmState>()(
           }
 
           return true;
-        });
+        })
+         // Apply sorting if specified
+         if (sortBy) {
+          filteredFilms = [...filteredFilms].sort((a, b) => {
+            switch (sortBy) {
+              case "title-asc":
+                return a.title.localeCompare(b.title);
+              case "title-desc":
+                return b.title.localeCompare(a.title);
+              case "duration-asc":
+                return parseInt(a.running_time) - parseInt(b.running_time); 
+              case "duration-desc":
+                return parseInt(b.running_time) - parseInt(a.running_time); 
+              case "score-asc":
+                return parseInt(a.rt_score) - parseInt(b.rt_score);
+              case "score-desc":
+                return parseInt(b.rt_score) - parseInt(a.rt_score);
+              case "userRating-asc":
+                return (a.userRating || 0) - (b.userRating || 0);
+              case "userRating-desc":
+                return (b.userRating || 0) - (a.userRating || 0);
+              default:
+                return 0;
+            }
+          });
+        }
+
+        return filteredFilms;
+        
       },
     }),
     {

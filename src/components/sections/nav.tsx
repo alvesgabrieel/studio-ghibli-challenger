@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { FilmState } from "@/store/filmStore";
 import { useFilmStore } from "@/store/filmStore";
 
 import { Button } from "../ui/button";
@@ -15,7 +16,7 @@ import { Checkbox } from "../ui/checkbox";
 import { StarRating } from "../ui/starRating";
 
 const Nav = () => {
-  const { searchTerm, setSearchTerm, filters, setFilter, clearAllFilters } =
+  const { searchTerm, setSearchTerm, filters, setFilter, clearAllFilters, sortBy, setSort } =
     useFilmStore();
 
   return (
@@ -42,19 +43,21 @@ const Nav = () => {
           </div>
 
           {/* filtros */}
-          <Select>
+          <Select value={sortBy || ""} onValueChange={(value) => {
+            setSort(value as FilmState["sortBy"]);
+          }}>
             <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Filtro" />
+              <SelectValue placeholder="Ordenar por" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="item1">Título (A-Z)</SelectItem>
-              <SelectItem value="item2">Título (Z-A)</SelectItem>
-              <SelectItem value="item3">Duração (Mais curto)</SelectItem>
-              <SelectItem value="item4">Duração (Mais longo)</SelectItem>
-              <SelectItem value="item5">Classificação (Mais alta)</SelectItem>
-              <SelectItem value="item6">Classificação (Mais baixa)</SelectItem>
-              <SelectItem value="item7">Pontuação (Mais baixa)</SelectItem>
-              <SelectItem value="item8">Pontuação (Mais baixa)</SelectItem>
+              <SelectItem value="title-asc">Título (A-Z)</SelectItem>
+              <SelectItem value="title-desc">Título (Z-A)</SelectItem>
+              <SelectItem value="duration-asc">Duração (Mais curto)</SelectItem>
+              <SelectItem value="duration-desc">Duração (Mais longo)</SelectItem>
+              <SelectItem value="score-desc">Classificação (Mais alta)</SelectItem>
+              <SelectItem value="score-asc">Classificação (Mais baixa)</SelectItem>
+              <SelectItem value="userRating-desc">Minha classificação (Mais alta)</SelectItem>
+              <SelectItem value="userRating-asc">Minha classificação (Mais baixa)</SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -99,7 +99,9 @@ const MainContent = () => {
                     <Star className="h-4 w-4" />
                     <span className="text-sm">{film.userRating}</span>
                   </div>
-                ) : null}
+                ) : (
+                  <p className="text-sm text-gray-600">Não avaliado</p>
+                )}
               </div>
             </div>
 
@@ -112,11 +114,11 @@ const MainContent = () => {
             <div className="mb-4 grid grid-cols-2 gap-2 text-sm">
               <div>
                 <p className="font-medium text-gray-500">Director</p>
-                <p>{film.director}</p>
+                <p className="line-clamp-1">{film.director}</p>
               </div>
               <div>
-                <p className="font-medium text-gray-500">Producer</p>
-                <p>{film.producer}</p>
+                <p className="font-medium text-gray-500 " >Producer</p>
+                <p className="line-clamp-1">{film.producer}</p>
               </div>
             </div>
 
