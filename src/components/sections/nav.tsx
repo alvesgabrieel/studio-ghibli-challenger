@@ -16,8 +16,15 @@ import { Checkbox } from "../ui/checkbox";
 import { StarRating } from "../ui/starRating";
 
 const Nav = () => {
-  const { searchTerm, setSearchTerm, filters, setFilter, clearAllFilters, sortBy, setSort } =
-    useFilmStore();
+  const {
+    searchTerm,
+    setSearchTerm,
+    filters,
+    setFilter,
+    clearAllFilters,
+    sortBy,
+    setSort,
+  } = useFilmStore();
 
   return (
     <>
@@ -43,9 +50,12 @@ const Nav = () => {
           </div>
 
           {/* filtros */}
-          <Select value={sortBy || ""} onValueChange={(value) => {
-            setSort(value as FilmState["sortBy"]);
-          }}>
+          <Select
+            value={sortBy || ""}
+            onValueChange={(value) => {
+              setSort(value as FilmState["sortBy"]);
+            }}
+          >
             <SelectTrigger className="w-[180px]">
               <SelectValue placeholder="Ordenar por" />
             </SelectTrigger>
@@ -53,11 +63,17 @@ const Nav = () => {
               <SelectItem value="title-asc">Título (A-Z)</SelectItem>
               <SelectItem value="title-desc">Título (Z-A)</SelectItem>
               <SelectItem value="duration-asc">Duração (Mais curto)</SelectItem>
-              <SelectItem value="duration-desc">Duração (Mais longo)</SelectItem>
-              <SelectItem value="score-desc">Classificação (Mais alta)</SelectItem>
-              <SelectItem value="score-asc">Classificação (Mais baixa)</SelectItem>
-              <SelectItem value="userRating-desc">Minha classificação (Mais alta)</SelectItem>
-              <SelectItem value="userRating-asc">Minha classificação (Mais baixa)</SelectItem>
+              <SelectItem value="duration-desc">
+                Duração (Mais longo)
+              </SelectItem>
+              <SelectItem value="score-desc">Avaliação (Mais alta)</SelectItem>
+              <SelectItem value="score-asc">Avaliação (Mais baixa)</SelectItem>
+              <SelectItem value="userRating-desc">
+                Classificação (Mais alta)
+              </SelectItem>
+              <SelectItem value="userRating-asc">
+                Classificação (Mais baixa)
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>
