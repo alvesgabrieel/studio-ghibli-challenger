@@ -7,6 +7,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useFilmStore } from "@/store/filmStore";
 import { formatRuntime } from "@/utils/formatRuntime";
+import { highlightMatch } from "@/utils/highlight";
 
 import { StarRating } from "../ui/starRating";
 import { FilmRatingDialog } from "./FilmRatingDialog";
@@ -20,6 +21,8 @@ const MainContent = () => {
     setNote,
     setUserRating,
     getFilteredFilms,
+    searchTerm, 
+    filters
   } = useFilmStore();
 
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -106,9 +109,12 @@ const MainContent = () => {
             </div>
 
             {/* Descrição (limitada a 3 linhas) */}
-            <p className="mb-3 line-clamp-3 text-sm text-gray-600">
-              {film.description}
-            </p>
+   <p className="mb-3 line-clamp-3 text-sm text-gray-600">
+  {filters.includeSynopsis
+    ? highlightMatch(film.description, searchTerm)
+    : film.description}
+</p>
+
 
             {/* Diretor e Produtor */}
             <div className="mb-4 grid grid-cols-2 gap-2 text-sm">
