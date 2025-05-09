@@ -1,3 +1,4 @@
+import { toast } from "sonner";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -65,24 +66,51 @@ export const useFilmStore = create<FilmState>()(
             userRating: 0,
           })),
         }),
-      toggleFavorite: (id) =>
-        set((state) => ({
-          films: state.films.map((film) =>
-            film.id === id ? { ...film, isFavorite: !film.isFavorite } : film,
-          ),
-        })),
-      toggleWatched: (id) =>
-        set((state) => ({
-          films: state.films.map((film) =>
-            film.id === id ? { ...film, isWatched: !film.isWatched } : film,
-          ),
-        })),
-      setNote: (id, note) =>
-        set((state) => ({
-          films: state.films.map((film) =>
-            film.id === id ? { ...film, note } : film,
-          ),
-        })),
+       toggleFavorite: (id) => {
+        set((state) => {
+          const updatedFilms = state.films.map((film) =>
+            film.id === id ? { ...film, isFavorite: !film.isFavorite } : film
+          );
+
+          const isFavorite = updatedFilms.find((film) => film.id === id)?.isFavorite;
+
+          if (isFavorite) {
+            toast.success("Filme adicionado aos favoritos!"); 
+          } else {
+            toast.warning("Filme removido dos favoritos!"); 
+          }
+
+          return { films: updatedFilms };
+        });
+      },
+      toggleWatched: (id) => { 
+        set((state) => {
+          const updatedWatched = state.films.map((film) =>
+            film.id === id ? { ...film, isWatched: !film.isWatched, } : film,            
+          );
+
+          const isWatched = updatedWatched.find((film) => film.id === id)?.isWatched;
+
+          if (isWatched) {
+            toast.success("Filme assistido!");
+          } else {
+            toast.error("Filme removido dos assistidos!");
+          }
+
+          return {films: updatedWatched}
+        });
+      },
+       setNote: (id, note) => {
+        set((state) => {
+          const updatedFilms = state.films.map((film) =>
+            film.id === id ? { ...film, note } : film
+          );
+
+          toast.success(`Informações do filme atualizada!`);
+
+          return { films: updatedFilms };
+        });
+      },
       setUserRating: (id, rating) =>
         set((state) => ({
           films: state.films.map((film) =>
