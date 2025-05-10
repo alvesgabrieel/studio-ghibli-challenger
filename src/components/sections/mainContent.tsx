@@ -2,7 +2,7 @@
 
 import { Calendar, Clock, Eye, Heart, NotebookPen, Star } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { highlightMatch } from "@/components/ui/highlight";
@@ -14,7 +14,6 @@ import { FilmRatingDialog } from "./filmRatingDialog";
 
 const MainContent = () => {
   const {
-    loading,
     toggleFavorite,
     toggleWatched,
     setNote,
@@ -23,6 +22,7 @@ const MainContent = () => {
     searchTerm,
   } = useFilmStore();
 
+  const [isMounted, setIsMounted] = useState(false);
   const [expandedFilmId, setExpandedFilmId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedFilm, setSelectedFilm] = useState<{
@@ -30,6 +30,12 @@ const MainContent = () => {
     note?: string;
     userRating?: number;
   } | null>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const filteredFilms = getFilteredFilms();
 
   const handleOpenDialog = (film: {
     id: string;
@@ -50,12 +56,20 @@ const MainContent = () => {
     setExpandedFilmId(expandedFilmId === id ? null : id);
   };
 
-  const filteredFilms = getFilteredFilms();
+  if (!isMounted) {
+    return (
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        {[...Array(8)].map((_, i) => (
+          <div key={i} className="h-96 animate-pulse rounded-lg bg-gray-200" />
+        ))}
+      </div>
+    );
+  }
 
-  if (loading) {
+  if (filteredFilms.length === 0) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <div className="border-primary h-12 w-12 animate-spin rounded-full border-t-2 border-b-2"></div>
+        <p className="text-gray-500">Nenhum filme encontrado</p>
       </div>
     );
   }

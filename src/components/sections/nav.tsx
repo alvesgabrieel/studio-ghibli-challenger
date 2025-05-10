@@ -1,3 +1,5 @@
+"use client";
+
 import { Eye, Heart, NotebookPen, Star } from "lucide-react";
 
 import { SearchBar } from "@/components/ui/searchBar";

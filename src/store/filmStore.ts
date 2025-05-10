@@ -14,8 +14,6 @@ export interface FilmWithMeta extends Film {
 export interface FilmState {
   films: FilmWithMeta[];
   searchTerm: string;
-  loading: boolean;
-  error: string | null;
   sortBy:
     | "title-asc"
     | "title-desc"
@@ -43,8 +41,6 @@ export interface FilmState {
   setFilter: (filter: Partial<FilmState["filters"]>) => void;
   clearAllFilters: () => void;
   getFilteredFilms: () => FilmWithMeta[];
-  setLoading: (loading: boolean) => void;
-  setError: (error: string | null) => void;
 }
 
 export const useFilmStore = create<FilmState>()(
@@ -52,8 +48,6 @@ export const useFilmStore = create<FilmState>()(
     (set, get) => ({
       films: [],
       searchTerm: "",
-      loading: false,
-      error: null,
       sortBy: null,
       filters: {
         favoritesOnly: false,
@@ -62,19 +56,24 @@ export const useFilmStore = create<FilmState>()(
         minRating: null,
         includeSynopsis: false,
       },
-      setLoading: (loading) => set({ loading }),
       setSort: (sort) => set({ sortBy: sort }),
-      setError: (error) => set({ error }),
-      setFilms: (films) =>
-        set({
-          films: films.map((film) => ({
-            ...film,
-            isFavorite: false,
-            isWatched: false,
-            note: "",
-            userRating: 0,
-          })),
-        }),
+      setFilms: (newFilms) => {
+        set((state) => {
+          const updatedFilms = newFilms.map((newFilm) => {
+            const existingFilm = state.films.find((f) => f.id === newFilm.id);
+            return existingFilm
+              ? { ...newFilm, ...existingFilm }
+              : {
+                  ...newFilm,
+                  isFavorite: false,
+                  isWatched: false,
+                  note: "",
+                  userRating: 0,
+                };
+          });
+          return { films: updatedFilms };
+        });
+      },
       toggleFavorite: (id) => {
         set((state) => {
           const updatedFilms = state.films.map((film) =>
@@ -165,9 +164,8 @@ export const useFilmStore = create<FilmState>()(
           if (minRating !== null) {
             const filmRating = film.userRating ?? 0;
 
-            //Casos especiais do select
-            if (minRating === -1) return filmRating > 0; // "Classificados"
-            if (minRating === -2) return filmRating === 0; // "Sem classificção"
+            if (minRating === -1) return filmRating > 0;
+            if (minRating === -2) return filmRating === 0;
 
             if (filmRating !== minRating) return false;
           }
@@ -184,7 +182,7 @@ export const useFilmStore = create<FilmState>()(
 
           return true;
         });
-        // Apply sorting if specified
+
         if (sortBy) {
           filteredFilms = [...filteredFilms].sort((a, b) => {
             switch (sortBy) {
