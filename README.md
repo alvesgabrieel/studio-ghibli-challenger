@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Studio Ghibli API
 
-## Getting Started
+[Studio Ghibli API - projeto ao qual consumo uma API pública dos estúdios ghibli, exibo uma lista dos filmes com suas informações e algumas opções de filtros (assistidos, favoritos) e ações (adicionar comentários e classificação). ]
 
-First, run the development server:
+## 📋 Pré-requisitos
+
+- Node.js
+- npm
+- Opcional: Yarn (se preferir usar em vez do npm)
+
+## 🛠️ Ferramentas Utilizadas
+
+- **Linguagem:** TypeScript
+- **Framework:** Next.js
+- **Estilização:** Tailwind CSS
+- **Bibliotecas UI:** ShadCN
+- **Gerenciamento de Estado:** Zustand
+- **Testes:** Jest, React Testing Library
+- **HTTP Client:** Axios
+- **Formatação:** ESLint, Prettier
+
+## 🚀 Requisitos implementados:
+
+### Listagem de filmes com as seguintes informações:
+
+- Imagem do filme, título, ano de lançamento, duração, sinopse, diretor, produtor e nota de avaliação.
+
+### Marcar filme como assistido e favorito
+
+### Filtro filmes por títulos e por sinopse(opcional)
+
+### Adicionar anotações a um filme
+
+### Classificar um filme
+
+### Filtrar filmes
+
+- Assistidos, favoritos, com anotações, classificação.
+
+### Ordenação de filmes (crescente e decrescente) por:
+
+- Título, duração, avaliação pessoal e nota de avaliação.
+
+### Uso do typescript
+
+### Responsividade básica
+
+### Mensagens toast de feedback para o usuário
+
+- Ao marcar e desmarcar filme assistido e favorito.
+- Adicionar, editar e remover informações.
+
+### Testes unitários
+
+- Renderização de componentes e ações da store.
+
+### Separação clara de responsabilidades
+
+- componentes, hooks, services, store, types, e utils
+
+### Bibliotecas de estilo
+
+### Contexto para persistencia de meta dados
+
+### Solução para gerenciar estados assíncronos
+
+## 📂 Estrutura do Projeto
+
+/src
+|-- /app # Rotas principais
+|-- /components # Componentes reutilizáveis
+|-- /hooks # Custom hooks
+|-- /services # Serviços externos
+|-- /store # Gerenciamento de estado global
+|-- /types # Tipos TypeScript
+|-- /utils # Funções utilitárias
+
+## 🚀 Instalação e Execução
+
+Siga estas etapas para instalar e executar o projeto localmente:
+
+### Ambiente de Desenvolvimento
+
+1. Clone o repositório:
+
+   ```bash
+   git clone https://github.com/alvesgabrieel/studio-ghibli-challenger.git
+   ```
+
+2. Baixe dependencias:
+
+   ```bash
+   npm install
+    # ou
+   yarn install
+   ```
+
+3. Inicie o servidor de desenvolvimento:
 
 ```bash
 npm run dev
-# or
+# ou
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Acesse: http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🧪 Testes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+A suíte de testes cobre:
 
-## Learn More
+### Renderização de componentes
 
-To learn more about Next.js, take a look at the following resources:
+### Interações do usuário
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Comportamento da store (Zustand)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1. Como rodar os testes:
+   ```bash
+   npm test
+   ```
