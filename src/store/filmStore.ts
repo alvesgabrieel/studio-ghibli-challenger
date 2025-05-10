@@ -4,7 +4,7 @@ import { persist } from "zustand/middleware";
 
 import { Film } from "@/types/film";
 
-interface FilmWithMeta extends Film {
+export interface FilmWithMeta extends Film {
   isFavorite?: boolean;
   isWatched?: boolean;
   note?: string;
@@ -16,7 +16,16 @@ export interface FilmState {
   searchTerm: string;
   loading: boolean;
   error: string | null;
-  sortBy: "title-asc" | "title-desc" | "duration-asc" | "duration-desc" | "score-asc" | "score-desc" | "userRating-asc" | "userRating-desc" | null;
+  sortBy:
+    | "title-asc"
+    | "title-desc"
+    | "duration-asc"
+    | "duration-desc"
+    | "score-asc"
+    | "score-desc"
+    | "userRating-asc"
+    | "userRating-desc"
+    | null;
   filters: {
     favoritesOnly: boolean;
     watchedOnly: boolean;
@@ -66,30 +75,34 @@ export const useFilmStore = create<FilmState>()(
             userRating: 0,
           })),
         }),
-       toggleFavorite: (id) => {
+      toggleFavorite: (id) => {
         set((state) => {
           const updatedFilms = state.films.map((film) =>
-            film.id === id ? { ...film, isFavorite: !film.isFavorite } : film
+            film.id === id ? { ...film, isFavorite: !film.isFavorite } : film,
           );
 
-          const isFavorite = updatedFilms.find((film) => film.id === id)?.isFavorite;
+          const isFavorite = updatedFilms.find(
+            (film) => film.id === id,
+          )?.isFavorite;
 
           if (isFavorite) {
-            toast.success("Filme adicionado aos favoritos!"); 
+            toast.success("Filme adicionado aos favoritos!");
           } else {
-            toast.warning("Filme removido dos favoritos!"); 
+            toast.warning("Filme removido dos favoritos!");
           }
 
           return { films: updatedFilms };
         });
       },
-      toggleWatched: (id) => { 
+      toggleWatched: (id) => {
         set((state) => {
           const updatedWatched = state.films.map((film) =>
-            film.id === id ? { ...film, isWatched: !film.isWatched, } : film,            
+            film.id === id ? { ...film, isWatched: !film.isWatched } : film,
           );
 
-          const isWatched = updatedWatched.find((film) => film.id === id)?.isWatched;
+          const isWatched = updatedWatched.find(
+            (film) => film.id === id,
+          )?.isWatched;
 
           if (isWatched) {
             toast.success("Filme assistido!");
@@ -97,13 +110,13 @@ export const useFilmStore = create<FilmState>()(
             toast.error("Filme removido dos assistidos!");
           }
 
-          return {films: updatedWatched}
+          return { films: updatedWatched };
         });
       },
-       setNote: (id, note) => {
+      setNote: (id, note) => {
         set((state) => {
           const updatedFilms = state.films.map((film) =>
-            film.id === id ? { ...film, note } : film
+            film.id === id ? { ...film, note } : film,
           );
 
           toast.success(`Informações do filme atualizada!`);
@@ -150,12 +163,12 @@ export const useFilmStore = create<FilmState>()(
           if (withNotesOnly && !film.note) return false;
 
           if (minRating !== null) {
-            const filmRating = film.userRating ?? 0
-  
+            const filmRating = film.userRating ?? 0;
+
             //Casos especiais do select
             if (minRating === -1) return filmRating > 0; // "Classificados"
-            if (minRating === -2) return filmRating === 0; // "Sem classificção" 
-  
+            if (minRating === -2) return filmRating === 0; // "Sem classificção"
+
             if (filmRating !== minRating) return false;
           }
 
@@ -170,9 +183,9 @@ export const useFilmStore = create<FilmState>()(
           }
 
           return true;
-        })
-         // Apply sorting if specified
-         if (sortBy) {
+        });
+        // Apply sorting if specified
+        if (sortBy) {
           filteredFilms = [...filteredFilms].sort((a, b) => {
             switch (sortBy) {
               case "title-asc":
@@ -180,9 +193,9 @@ export const useFilmStore = create<FilmState>()(
               case "title-desc":
                 return b.title.localeCompare(a.title);
               case "duration-asc":
-                return parseInt(a.running_time) - parseInt(b.running_time); 
+                return parseInt(a.running_time) - parseInt(b.running_time);
               case "duration-desc":
-                return parseInt(b.running_time) - parseInt(a.running_time); 
+                return parseInt(b.running_time) - parseInt(a.running_time);
               case "score-asc":
                 return parseInt(a.rt_score) - parseInt(b.rt_score);
               case "score-desc":
@@ -198,7 +211,6 @@ export const useFilmStore = create<FilmState>()(
         }
 
         return filteredFilms;
-        
       },
     }),
     {

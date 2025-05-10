@@ -1,9 +1,8 @@
-// components/ui/starRating.tsx
 "use client";
 
 import { Star } from "lucide-react";
 
-import { cn } from "@/lib/utils"; // Importe seu utilitário de classes
+import { cn } from "@/lib/utils";
 
 interface StarRatingProps {
   rating: number;
@@ -16,12 +15,12 @@ export function StarRating({
   rating,
   interactive = false,
   onRatingChange,
-  size = "md"
+  size = "md",
 }: StarRatingProps) {
   const sizeClasses = {
     sm: "size-3",
     md: "size-4",
-    lg: "size-5"
+    lg: "size-5",
   };
 
   const handleClick = (selectedRating: number) => {
@@ -40,14 +39,18 @@ export function StarRating({
           disabled={!interactive}
           className={cn(
             "focus:outline-none",
-            interactive ? "cursor-pointer hover:scale-110 transition-transform" : "cursor-default"
+            interactive
+              ? "cursor-pointer transition-transform hover:scale-110"
+              : "cursor-default",
           )}
-          aria-label={`Rate ${star} star${star !== 1 ? 's' : ''}`}
+          aria-label={`Rate ${star} star${star !== 1 ? "s" : ""}`}
         >
           <Star
             className={cn(
               sizeClasses[size],
-              star <= rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
+              star <= rating
+                ? "fill-yellow-400 text-yellow-400"
+                : "text-gray-300",
             )}
           />
         </button>

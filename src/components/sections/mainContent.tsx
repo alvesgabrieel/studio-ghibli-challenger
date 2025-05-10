@@ -10,12 +10,11 @@ import { useFilmStore } from "@/store/filmStore";
 import { formatRuntime } from "@/utils/formatRuntime";
 
 import { StarRating } from "../ui/starRating";
-import { FilmRatingDialog } from "./FilmRatingDialog";
+import { FilmRatingDialog } from "./filmRatingDialog";
 
 const MainContent = () => {
   const {
     loading,
-    error,
     toggleFavorite,
     toggleWatched,
     setNote,
@@ -53,8 +52,13 @@ const MainContent = () => {
 
   const filteredFilms = getFilteredFilms();
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="border-primary h-12 w-12 animate-spin rounded-full border-t-2 border-b-2"></div>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -187,7 +191,9 @@ const MainContent = () => {
                   <div className="mt-2 space-y-1 text-sm">
                     {film.userRating !== undefined && film.userRating > 0 && (
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-600">Sua avaliação:</span>
+                        <span className="text-gray-600">
+                          Sua classificação:
+                        </span>
                         <StarRating rating={film.userRating} size="sm" />
                       </div>
                     )}
