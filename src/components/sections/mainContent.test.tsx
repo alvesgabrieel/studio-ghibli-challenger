@@ -47,7 +47,7 @@ jest.mock("@/components/ui/starRating", () => ({
   ),
 }));
 
-jest.mock("./filmRatingDialog", () => ({
+jest.mock("@/components/sections/filmRatingDialog", () => ({
   FilmRatingDialog: jest.fn(() => null),
 }));
 
