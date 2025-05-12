@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 
-import { FilmRatingDialog } from "./filmRatingDialog";
+import { FilmRatingDialog } from "@/components/sections/filmRatingDialog";
 
 interface StarRatingProps {
   rating: number;

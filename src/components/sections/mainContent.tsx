@@ -4,13 +4,13 @@ import { Calendar, Clock, Eye, Heart, NotebookPen, Star } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
+import { FilmRatingDialog } from "@/components/sections/filmRatingDialog";
 import { Button } from "@/components/ui/button";
 import { highlightMatch } from "@/components/ui/highlight";
 import { useFilmStore } from "@/store/filmStore";
 import { formatRuntime } from "@/utils/formatRuntime";
 
 import { StarRating } from "../ui/starRating";
-import { FilmRatingDialog } from "./filmRatingDialog";
 
 const MainContent = () => {
   const {
